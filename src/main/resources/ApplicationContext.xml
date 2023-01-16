@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="idGenerator" class="spring.core.util.IdGenerator"/>
+
+    <bean id="paginator" class="spring.core.util.Paginator"/>
+
+    <bean id="jsonMapper" class="spring.core.util.json.JsonMapper"/>
+
+    <bean class="spring.core.util.postprocessor.BindStaticDataAnnotationBeanPostProcessor">
+        <constructor-arg index="0" ref="jsonMapper"/>
+        <constructor-arg index="1" value="Started binding..."/>
+        <constructor-arg index="2" value="Successfully finished binding"/>
+        <constructor-arg index="3" ref="idGenerator"/>
+    </bean>
+
+    <bean id="userStorage" class="spring.core.storage.impl.UserStorageImpl" autowire="no">
+        <property name="paginator" ref="paginator"/>
+    </bean>
+
+    <bean id="eventStorage" class="spring.core.storage.impl.EventStorageImpl" autowire="no">
+        <property name="paginator" ref="paginator"/>
+    </bean>
+
+    <bean id="ticketStorage" class="spring.core.storage.impl.TicketStorageImpl" autowire="no">
+        <property name="paginator" ref="paginator"/>
+    </bean>
+
+    <bean id="eventDao" class="spring.core.dao.impl.EventDaoImpl" autowire="no">
+        <property name="eventStorage" ref="eventStorage"/>
+    </bean>
+
+    <bean id="ticketDao" class="spring.core.dao.impl.TicketDaoImpl" autowire="no">
+        <property name="ticketStorage" ref="ticketStorage"/>
+    </bean>
+
+    <bean id="userDao" class="spring.core.dao.impl.UserDaoImpl" autowire="no">
+        <property name="userStorage" ref="userStorage"/>
+    </bean>
+
+    <bean id="eventService" class="spring.core.service.Impl.EventServiceImpl" autowire="no">
+        <property name="eventDao" ref="eventDao"/>
+        <property name="idGenerator" ref="idGenerator"/>
+    </bean>
+
+    <bean id="ticketService" class="spring.core.service.Impl.TicketServiceImpl" autowire="no">
+        <property name="ticketDao" ref="ticketDao"/>
+        <property name="eventDao" ref="eventDao"/>
+        <property name="userDao" ref="userDao"/>
+        <property name="idGenerator" ref="idGenerator"/>
+    </bean>
+
+    <bean id="userService" class="spring.core.service.Impl.UserServiceImpl" autowire="no">
+        <property name="userDao" ref="userDao"/>
+        <property name="idGenerator" ref="idGenerator"/>
+    </bean>
+
+    <bean id="bookingFacade" class="spring.core.facade.Impl.BookingFacadeImpl">
+        <constructor-arg type="spring.core.service.UserService" ref="userService"/>
+        <constructor-arg type="spring.core.service.EventService" ref="eventService"/>
+        <constructor-arg type="spring.core.service.TicketService" ref="ticketService"/>
+    </bean>
+</beans>

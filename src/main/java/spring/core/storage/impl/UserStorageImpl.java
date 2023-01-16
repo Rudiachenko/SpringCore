@@ -1,0 +1,69 @@
+package spring.core.storage.impl;
+
+import lombok.Setter;
+import spring.core.model.User;
+import spring.core.model.impl.UserImpl;
+import spring.core.storage.UserStorage;
+import spring.core.util.Paginator;
+import spring.core.util.annotation.BindStaticData;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Setter
+public class UserStorageImpl implements UserStorage {
+    @BindStaticData(fileLocation = "preparedUsers.json", castTo = UserImpl.class)
+    private final Map<Long, User> userStorageMap = new HashMap<>();
+    private Paginator<User> paginator;
+
+    @Override
+    public User add(User user) {
+        return userStorageMap.put(user.getId(), user);
+    }
+
+    @Override
+    public Optional<User> getUserById(long userId) {
+        return Optional.ofNullable(userStorageMap.get(userId));
+    }
+
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return userStorageMap.values().stream()
+                .filter(user -> Objects.equals(user.getEmail(), email))
+                .findFirst();
+    }
+
+    @Override
+    public List<User> getUsersByName(String name, int pageSize, int pageNum) {
+        List<User> usersByName = getUsersWithFilter(name);
+        return paginator.paginate(usersByName, pageSize, pageNum);
+    }
+
+    @Override
+    public Optional<User> updateUser(User user) {
+        return Optional.ofNullable(userStorageMap.get(user.getId()));
+    }
+
+    @Override
+    public boolean deleteUser(long userId) {
+        if (userStorageMap.containsKey(userId)) {
+            userStorageMap.remove(userId);
+            return true;
+        }
+        return false;
+    }
+
+    private List<User> getUsersWithFilter(String name) {
+        return userStorageMap.values().stream()
+                .filter(user -> user.getName().equals(name))
+                .collect(Collectors.toList());
+    }
+
+    public void setPaginator(Paginator<User> paginator) {
+        this.paginator = paginator;
+    }
+}
