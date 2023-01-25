@@ -1,6 +1,7 @@
 package spring.core.storage.impl;
 
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import spring.core.model.User;
 import spring.core.model.impl.UserImpl;
 import spring.core.storage.UserStorage;
@@ -14,11 +15,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Setter
+@Component
 public class UserStorageImpl implements UserStorage {
     @BindStaticData(fileLocation = "preparedUsers.json", castTo = UserImpl.class)
     private final Map<Long, User> userStorageMap = new HashMap<>();
-    private Paginator<User> paginator;
+    private final Paginator<User> paginator;
+
+    @Autowired
+    public UserStorageImpl(Paginator<User> paginator) {
+        this.paginator = paginator;
+    }
 
     @Override
     public User add(User user) {
@@ -61,9 +67,5 @@ public class UserStorageImpl implements UserStorage {
         return userStorageMap.values().stream()
                 .filter(user -> user.getName().equals(name))
                 .collect(Collectors.toList());
-    }
-
-    public void setPaginator(Paginator<User> paginator) {
-        this.paginator = paginator;
     }
 }

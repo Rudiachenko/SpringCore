@@ -4,6 +4,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import spring.core.dao.EventDao;
 import spring.core.dao.TicketDao;
 import spring.core.dao.UserDao;
@@ -20,11 +22,20 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Setter
+@Service
 public class TicketServiceImpl implements TicketService {
-    private TicketDao ticketDao;
-    private EventDao eventDao;
-    private UserDao userDao;
+    private final TicketDao ticketDao;
+    private final EventDao eventDao;
+    private final UserDao userDao;
     private IdGenerator idGenerator;
+
+    @Autowired
+    public TicketServiceImpl(TicketDao ticketDao, EventDao eventDao, UserDao userDao, IdGenerator idGenerator) {
+        this.ticketDao = ticketDao;
+        this.eventDao = eventDao;
+        this.userDao = userDao;
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {

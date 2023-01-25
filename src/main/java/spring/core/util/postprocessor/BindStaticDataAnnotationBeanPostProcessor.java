@@ -1,12 +1,13 @@
 package spring.core.util.postprocessor;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import spring.core.model.Identifiable;
 import spring.core.util.IdGenerator;
@@ -24,12 +25,18 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-@AllArgsConstructor
+@Component
 public class BindStaticDataAnnotationBeanPostProcessor implements BeanPostProcessor {
-    private JsonMapper jsonMapper;
-    private String startInfoMessage;
-    private String finishInfoMessage;
-    private IdGenerator idGenerator;
+    private static final String START_INFO_MESSAGE = "Started binding...";
+    private static final String FINISH_INFO_MESSAGE = "Successfully finished binding";
+    private final JsonMapper jsonMapper;
+    private final IdGenerator idGenerator;
+
+    @Autowired
+    public BindStaticDataAnnotationBeanPostProcessor(IdGenerator idGenerator) {
+        this.jsonMapper = new JsonMapper();
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     @Nullable
@@ -38,12 +45,12 @@ public class BindStaticDataAnnotationBeanPostProcessor implements BeanPostProces
         for (Field field : declaredFields) {
             BindStaticData annotation = field.getAnnotation(BindStaticData.class);
             if (Objects.nonNull(annotation) && Map.class.isAssignableFrom(field.getType())) {
-                log.info(startInfoMessage);
+                log.info(START_INFO_MESSAGE);
                 JSONArray jsonArray = new JSONArray(readFileFromResources(annotation.fileLocation()));
                 Map<Long, Identifiable> hashMap = instantiateCollectionFromJson(jsonArray, annotation.castTo());
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, bean, hashMap);
-                log.info(finishInfoMessage);
+                log.info(FINISH_INFO_MESSAGE);
             }
         }
         return bean;

@@ -1,6 +1,7 @@
 package spring.core.storage.impl;
 
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import spring.core.model.Event;
 import spring.core.model.Ticket;
 import spring.core.model.User;
@@ -14,10 +15,15 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Setter
+@Component
 public class TicketStorageImpl implements TicketStorage {
     private final Map<Long, Ticket> ticketStorageMap = new HashMap<>();
-    private Paginator<Ticket> paginator;
+    private final Paginator<Ticket> paginator;
+
+    @Autowired
+    public TicketStorageImpl(Paginator<Ticket> paginator) {
+        this.paginator = paginator;
+    }
 
     @Override
     public List<Ticket> getAllTickets() {

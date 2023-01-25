@@ -1,5 +1,9 @@
+package facade;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import spring.core.config.AppConfig;
 import spring.core.facade.Impl.BookingFacadeImpl;
 import spring.core.model.Event;
 import spring.core.model.Ticket;
@@ -19,9 +23,10 @@ public class MainTest {
 
     @Test
     void realTest() {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+//        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
 
-        BookingFacadeImpl bookingFacadeImpl = context.getBean("bookingFacade", BookingFacadeImpl.class);
+        BookingFacadeImpl bookingFacadeImpl = applicationContext.getBean("bookingFacadeImpl", BookingFacadeImpl.class);
         User user = createUser("Bob", "bob@gmail.com");
         User createdUser = bookingFacadeImpl.createUser(user);
 

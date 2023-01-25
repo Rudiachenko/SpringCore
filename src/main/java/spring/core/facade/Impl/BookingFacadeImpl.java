@@ -1,6 +1,7 @@
 package spring.core.facade.Impl;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import spring.core.facade.BookingFacade;
 import spring.core.model.Event;
 import spring.core.model.Ticket;
@@ -12,11 +13,19 @@ import spring.core.service.UserService;
 import java.util.Date;
 import java.util.List;
 
-@AllArgsConstructor
+@Component
 public class BookingFacadeImpl implements BookingFacade {
+
     private final EventService eventService;
     private final TicketService ticketService;
     private final UserService userService;
+
+    @Autowired
+    public BookingFacadeImpl(EventService eventService, TicketService ticketService, UserService userService) {
+        this.eventService = eventService;
+        this.ticketService = ticketService;
+        this.userService = userService;
+    }
 
     @Override
     public Event createEvent(Event event) {

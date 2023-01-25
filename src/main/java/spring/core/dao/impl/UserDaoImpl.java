@@ -1,6 +1,8 @@
 package spring.core.dao.impl;
 
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import spring.core.dao.UserDao;
 import spring.core.model.User;
 import spring.core.storage.UserStorage;
@@ -9,8 +11,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Setter
+@Repository
 public class UserDaoImpl implements UserDao {
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
+
+    @Autowired
+    public UserDaoImpl(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
     @Override
     public User add(User user) {

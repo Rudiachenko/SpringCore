@@ -2,6 +2,8 @@ package spring.core.service.Impl;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import spring.core.dao.EventDao;
 import spring.core.model.Event;
 import spring.core.model.impl.EventImpl;
@@ -16,9 +18,16 @@ import java.util.Optional;
 
 @Slf4j
 @Setter
+@Service
 public class EventServiceImpl implements EventService {
-    private EventDao eventDao;
+    private final EventDao eventDao;
     private IdGenerator idGenerator;
+
+    @Autowired
+    public EventServiceImpl(EventDao eventDao, IdGenerator idGenerator) {
+        this.eventDao = eventDao;
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     public Event createEvent(Event event) {

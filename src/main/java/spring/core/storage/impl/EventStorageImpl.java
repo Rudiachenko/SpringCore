@@ -1,6 +1,7 @@
 package spring.core.storage.impl;
 
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import spring.core.model.Event;
 import spring.core.storage.EventStorage;
 import spring.core.util.Paginator;
@@ -14,10 +15,15 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Setter
+@Component
 public class EventStorageImpl implements EventStorage {
     private final Map<Long, Event> eventStorageMap = new HashMap<>();
-    private Paginator<Event> paginator;
+    private final Paginator<Event> paginator;
+
+    @Autowired
+    public EventStorageImpl(Paginator<Event> paginator) {
+        this.paginator = paginator;
+    }
 
     @Override
     public Event add(Event event) {

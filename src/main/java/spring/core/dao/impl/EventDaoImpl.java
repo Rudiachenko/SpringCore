@@ -1,6 +1,8 @@
 package spring.core.dao.impl;
 
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import spring.core.dao.EventDao;
 import spring.core.model.Event;
 import spring.core.storage.impl.EventStorageImpl;
@@ -10,8 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Setter
+@Repository
 public class EventDaoImpl implements EventDao {
-    private EventStorageImpl eventStorage;
+    private final EventStorageImpl eventStorage;
+
+    @Autowired
+    public EventDaoImpl(EventStorageImpl eventStorage) {
+        this.eventStorage = eventStorage;
+    }
 
     @Override
     public Event add(Event event) {

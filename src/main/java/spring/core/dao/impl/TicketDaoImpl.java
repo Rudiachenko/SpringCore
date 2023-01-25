@@ -1,6 +1,8 @@
 package spring.core.dao.impl;
 
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import spring.core.dao.TicketDao;
 import spring.core.model.Event;
 import spring.core.model.Ticket;
@@ -10,8 +12,14 @@ import spring.core.storage.TicketStorage;
 import java.util.List;
 
 @Setter
+@Repository
 public class TicketDaoImpl implements TicketDao {
-    private TicketStorage ticketStorage;
+    private final TicketStorage ticketStorage;
+
+    @Autowired
+    public TicketDaoImpl(TicketStorage ticketStorage) {
+        this.ticketStorage = ticketStorage;
+    }
 
     @Override
     public List<Ticket> getAllTickets() {

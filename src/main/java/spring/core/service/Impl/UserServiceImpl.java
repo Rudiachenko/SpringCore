@@ -2,6 +2,8 @@ package spring.core.service.Impl;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import spring.core.dao.UserDao;
 import spring.core.model.User;
 import spring.core.model.impl.UserImpl;
@@ -14,9 +16,16 @@ import java.util.Optional;
 
 @Slf4j
 @Setter
+@Service
 public class UserServiceImpl implements UserService {
-    private UserDao userDao;
+    private final UserDao userDao;
     private IdGenerator idGenerator;
+
+    @Autowired
+    public UserServiceImpl(UserDao userDao, IdGenerator idGenerator) {
+        this.userDao = userDao;
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     public User create(User user) {
